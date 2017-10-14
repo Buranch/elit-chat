@@ -1,0 +1,155 @@
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="/chat-ui-css.css">
+    <!-- <link rel="stylesheet" href="/new_css.css"> -->
+
+    <link rel="stylesheet" href="/bootstrap-3.3.7.css">
+    <!-- <link rel="stylesheet" href="/materialize.min.css"> -->
+
+    <script src="/jquery-3.1.1.js"></script>
+    <!-- <script src="/materialize.js"> -->
+
+    </script>
+    <script src="/jquery-ui.js"></script>
+
+    </style>
+</head>
+
+<body>
+    <div id="myModal" class="modal">
+        <center class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <center>
+                    <h2 style="padding-top: 20px; font-family: 'Lithos Pro Regular';text-align: center;" id="welcome">Welcome to the Elite Chat</h2></center>
+
+            </div>
+            <div class="modal-body">
+                <center>
+                    <!-- <div class="dropdown"> -->
+                    <!--  Here Add Photo Choice -->
+                    <label>
+                      <input type="radio" name="fb" value="1"/>
+                      <img src="/mitu_little.png" class="img-circle">
+                    </label>
+
+                    <label>
+                        <input type="radio" name="fb" value="3"/>
+                        <img src="/3.png" class="img-circle">
+                      </label>
+
+                    <label>
+                          <input type="radio" name="fb" value="2"/>
+                          <img src="/2.png" class="img-circle">
+                        </label>
+                    <label>
+                          <input type="radio" name="fb" value="4"/>
+                          <img src="/4.png" class="img-circle">
+                        </label>
+                    <h3 style="font-family: 'Lithos Pro Regular'">Your Name Here: </h3>
+                    <input id="signed" type="text" class="form-control" style="width: 35%; margin-bottom: 13px;" placeholder="Username" aria-describedby="basic-addon1">
+                    <button type="button" id="signed_button" class="btn btn-primary" style="width: 35%;">Register</button>
+                    <p style="display: none" id="validate_error">You need to select one of the Images
+                        <p>
+                            <br>
+                </center>
+                <!-- <button name="start" onClick = "closeModal()" id = "startButton">Start</button> -->
+            </div>
+        </center>
+    </div>
+    <div id="megarja">
+    </div>
+    <div class="container" style="margin: 0px;">
+        <!-- The following div is custom list-group which i will use it to wrap one time chat by user Should contain
+    * circle image of the user
+    * Bold user name
+    * the message text
+    * the timestamp
+    * pretty much it for now
+     -->
+
+     <div id="username_display">
+          <div id="search">
+              <img src="/1.png"
+              class="img-circle img-responsive"
+              id="profile_pic"/>
+              <h5 id="profile_name">
+                Biruk Misganaw</h5>
+              </div>
+          <div id="current_chat">
+            <img src="/1.png" id="current_chat_img" class="img-circle img-responsive"/>
+            <!-- <input type="file" id="file"> -->
+
+            <h5 id="online_status">
+              Biruk Misganaw</h5>
+          </div>
+          <div id="online_notification">
+            <div class="three_boxes">
+              Online
+            </div>
+          </div>
+
+     </div>
+
+        <div class="roomJoined_display">
+          <div class="one_room_joined" id="mainChatRoom">
+              <img src="/main_chat.png" class="img-circle img-responsive" style="width: 72px; opacity: 1; float: left; margin-right: 11px; font-weight: bold" />
+              <h4 style="margin-bottom: 4px; font-weight: 600">Master Chat &#9786;</h4>
+              <p style=" font-size: small; font-family: cursive;">You can leave any message..</p>
+          </div>
+        </div>
+        <div id="left_side">
+            <div id="chat_rooms">
+
+            <div class="myMessages" id="myMessages">
+                <center id="intro_chat">
+                    <img src="/1.png" id="intro_image" class="img-circle" />
+                    <h2 id="hello">Hello, Biruk</h2>
+                    <h4 style="font-style: italic">"Chat is awesome when you chat!"</h4>
+                    <h4>Say hello to your friends.</h4>
+                </center>
+              </div>
+                        </div>
+                  <!--  Was here the textarea-->
+            <div id="side">
+                <h4 id="online_title"><span id="joined_now">Demeke Joined Now</span></h4>
+                <ul id="online_list">
+                </ul>
+            </div>
+
+            <div id="myRoomMessages">
+                <center id="intro_room">
+                    <h2 id="hello">No Private Chat so far</h2>
+                    <h4>You can send private messages</h4>
+                </center>
+            </div>
+
+            <div>
+              <textarea placeholder="Type your message.." id="input_area"  class="form-control" style="width: 505px;float:left;clear:both;">
+            </textarea>
+              <!-- <img src="/sent_2.png" id="sent_img" alt="sent"></img> -->
+              <label class="fileContainer">
+                <input id="attach" type="file"/>
+              </label>
+              <div  id="sent_img">Send</div>
+
+            </div>
+          </div>
+
+        </div>
+        <br>
+
+    </div>
+
+
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/socket.io-stream/socket.io-stream.js"></script>
+    <script src="/jquery-3.1.1.js"></script>
+    <script src="/jquery-ui.js"></script>
+    <script src="/main.js"></script>
+</body>
+
+</html>
