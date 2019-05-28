@@ -479,23 +479,78 @@ $(document).ready(function() {
         socket.emit("news", socket.io.engine.id);
         return socket.io.engine;
     });
-    $("#signed_button").click(function(){
-      if($('input[name=fb]:checked').val() == undefined){
-        console.log("You should return and select again");
-        $("#validate_error").css("display", "block");
-        return;
+    $("#login_here").click(function() {
+      console.log('login here');
+      $("#pass-2").css('display', 'none');
+      $("#signed_button").text("Login");
+    });
+    
+    function signupHandler() {
+      console.log('SignUp handler');
+      // prepare the object send API request
+      // handle the response, either successful or error
+      // may be do something with socket
+
+      var username = $('#username').val();
+      var pass1 = $('#pass-1').val();
+      var pass2 = $('#pass-2').val();
+
+      if(pass1 === pass2) {
+        // continue registerign
+        $.ajax({
+          method: "POST",
+          url: "http://localhost:3000/signup",
+          data: { username, password: pass1 }
+        })
+          .done(function( msg ) {
+            console.log('server response ', msg);
+            // alert( "Data Saved: " + msg );
+            if(msg.success) {
+              console.log('Successfully Registered');
+              console.log('login here');
+              $("#validate_error").css('display', 'block');
+              $("#validate_error").text(username + " is successfully registered, Please Login Now");
+              setTimeout(function(){
+                $("#pass-2").css('display', 'none');
+                $("#pass-1").val('');
+                $("#username").val('');
+                $("#signed_button").text("Login");
+              }, 200);
+
+            }else {
+              $("#validate_error").css('display', 'block');
+              $("#validate_error").text("Registeration is failed, Please Try again");
+           
+            }
+          });
+
+      }else
+      {
+        // show error
+        $("#validate_error").css('display', 'block');
+        $("#validate_error").text("Password Don't Match");
+     
       }
-      console.log("checked value");
-      console.log($('input[name=fb]:checked').val());
-      clientImage = $('input[name=fb]:checked').val() + '.png';
-      socket.emit("login", socket.io.engine.id);
+
+      console.log('username ', username, ' pass ', pass1, ' pass2 ', pass2);
+
+
+    }
+
+    function prepareChatWindow() {
 
       //Here i will get the name value
       // hidden the current background and light up the container
       // it's will be cool if it has some interval
       // and show the online status
+      //So far so good
+      console.log("checked value");
+      console.log($('input[name=fb]:checked').val());
+      clientImage = $('input[name=fb]:checked').val() + '.png';
+      socket.emit("login", socket.io.engine.id);
+
       setTimeout(function(){
-        let user_name = $("#signed").val();
+        let user_name = $("#username").val();
         console.log(user_name);
         // $("#online_status").html(user_name);
         $("#profile_name").html(user_name);
@@ -518,17 +573,50 @@ $(document).ready(function() {
         $("#online_status").html("Master Chat");
         $("#current_chat_img").attr("src", "/main_chat.png");
       }, 500);
-      //So far so good
-      console.log("SignedUP clicked!");
+    }
+
+
+    function loginHandler() {
+
+      var username = $('#username').val();
+      var pass1 = $('#pass-1').val();
+
+      console.log('Login handler');
+      $.ajax({
+        method: "POST",
+        url: "http://localhost:3000/login",
+        data: { username, password: pass1 }
+      })
+        .done(function( msg ) {
+          console.log('server response ', msg);
+          // alert( "Data Saved: " + msg );
+          if(msg.success) {
+            console.log('Successfully Logged In');
+            $("#validate_error").css('display', 'block');
+            $("#validate_error").text(username + " is successfully Login");
+            prepareChatWindow();
+          }else {
+            $("#validate_error").css('display', 'block');
+            $("#validate_error").text("Login failed, Please Try again");
+         
+          }
+        });
+    }
+
+
+    $("#signed_button").click(function(){
+      if($("#signed_button").text() === 'Login') {
+        return loginHandler();
+      }
+      else{
+        return signupHandler();
+      }
     });
 
     socket.on('news', function(data) {
         console.log("News received: " + data);
         name = data;
 
-    });
-    $("#target").submit(function() {
-        console.log("Hey you registered");
     });
 
 
@@ -540,6 +628,8 @@ $(document).ready(function() {
             // pass the user ID
             // socket.emit("typing", socket.io.engine.id);
     });
+
+    
     socket.on("typing", function(name, myBool){
           //Find and render who is typing on the list
           // console.log("MSG FROM SERVER, "+name+" is typing......");

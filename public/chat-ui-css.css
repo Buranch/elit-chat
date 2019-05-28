@@ -350,7 +350,7 @@ li {
 .modal-body {
     padding: 2px 16px;
     background-color: ghostwhite;
-    height: 307px;
+    height: 357px;
 }
 
 .modal-footer {
@@ -592,9 +592,8 @@ float: left;
   margin-right: 100%;
   margin-bottom: 25px;
 }
-.list-group-item-text{
-  color:
-}
+
+
 
 svg{
   width: 100vw;
@@ -602,4 +601,10 @@ svg{
 }
 svg:not(:root) {
     overflow: hidden;
+}
+
+
+#login_here {
+    color: blue;
+    cursor: pointer;
 }

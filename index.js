@@ -4,9 +4,30 @@ var app = require('express')();
 var http = require('http').Server(app);
 var ss = require('socket.io-stream');
 var path = require('path');
+var bodyParser = require('body-parser');
 var fs = require("fs");
 var mkdirp = require('mkdirp')
+require('./mysql');
+var dbfunc = require('./config/db-function');
+const authenticService = require('./app/services/authentic.service');
 
+
+
+dbfunc.connectionCheck.then((data) =>{
+  console.log(data);
+}).catch((err) => {
+   console.log(err);
+});
+
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+next();
+});
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
 //session addition
 // var RedisStore = require("connect-redis")(session)
 //adding socket io
@@ -38,6 +59,45 @@ app.get('/', function(req, res) {
     console.log("-----------Session succesfull!-------------");
     // console.log(req.session);
 });
+
+app.post('/login', function(req, res) {
+  console.log('login');
+  var loginData = {username: req.body.username, password: req.body.password};
+  authenticService.authentic(loginData).then((data) => {
+    if(data) {
+        if(data.length > 0) {
+          res.json({
+            "success":true,
+            "data":data
+          });
+        } else {
+          res.json({
+            "success":false,
+            "data":data
+          });
+        }
+     }
+   }).catch((err) => {
+     res.json(err);
+   });
+})
+
+
+app.post('/signup', function(req, res) {
+  console.log('req.body', req.body.username);
+  var signUpData = {username: req.body.username, password: req.body.password};
+  authenticService.signup(signUpData).then((data) => {
+    if(data) {
+       res.json({
+         "success":true,
+         "data":data
+       });
+     }
+   }).catch((err) => {
+     res.json(err);
+   });
+})
+
 app.get('/PrivateChat', function(req, res) {
 
     // res.send('<body>Hello world </body>');
