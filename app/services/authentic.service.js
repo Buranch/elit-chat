@@ -3,7 +3,8 @@ var authenticModel = require("../models/authentic.model");
 
 var authenticService = {
     authentic: authentic,
-    signup:signup
+    signup:signup,
+    getUserInfoByUsername:getUserInfoByUsername
 }
 
 function authentic(authenticData) {
@@ -27,6 +28,16 @@ function signup(signUpData) {
         })
     })
    
+}
+
+function getUserInfoByUsername(username) {
+    return new Promise((resolve,reject) => {
+        authenticModel.getUserInfoByUsername(username).then((data)=>{
+            resolve(data);
+        }).catch((err) => {
+            reject(err);
+        })
+    })
 }
 
 

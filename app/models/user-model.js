@@ -49,7 +49,7 @@ function initDB() {
 
 function createUserTable() {
     return new Promise((resolve, reject) => {
-        db.query('CREATE TABLE IF NOT EXISTS user (username VARCHAR(255), password VARCHAR(255))', (error, value) => {
+        db.query('CREATE TABLE IF NOT EXISTS user (username VARCHAR(255), password VARCHAR(255), clientImage VARCHAR(255))', (error, value) => {
             if(!!error) {
                 console.log("error ", error);
                 dbFunc.connectionRelease;
@@ -63,7 +63,6 @@ function createUserTable() {
     })
 
 }
-
 function createConvTable() {
     return new Promise((resolve, reject) => {
         db.query('CREATE TABLE IF NOT EXISTS convs (id VARCHAR(255), pas_1 VARCHAR(255), pas_2 VARCHAR(255))', (error, value) => {

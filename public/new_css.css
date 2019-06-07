@@ -77,7 +77,7 @@ body{
 
 #myCard {
     /*background-color: lightslategrey;*/
-        background-color: cadetblue;
+        background-color: #8c57c3;
     border: 0;
     /*height: 90px;*/
     margin-right: 168px;
@@ -91,7 +91,7 @@ body{
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 #myCard-room{
-    background-color: cadetblue;
+    background-color: #8c57c3;
     border: 0;
     /* height: 90px; */
     /* width: 416px; */
@@ -157,7 +157,7 @@ body{
 #sent_img{
   width: 84px;
   height: 53px;
-  background-color: cadetblue;
+  background-color: #8c57c3;
   padding: 14px;
   padding-left: 24px;
   float: left;
@@ -341,7 +341,7 @@ li {
 
 .modal-header {
     padding: 2px 16px 30px;
-    background-color: cadetblue;
+    background-color: #8c57c3;
     color: white;
 }
 
@@ -504,7 +504,7 @@ label>input:checked+img {
 }
 #search{
   width: 271px;
-background-color: cadetblue;
+background-color: #8c57c3;
 height: 60px;
 float: left;
 
@@ -514,7 +514,7 @@ float: left;
   float: left;
   height: 60px;
   /*background-color: #9caeaa;*/
-  background-color: cadetblue;
+  background-color: #8c57c3;
 
   width: 650px;
       box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
@@ -524,16 +524,16 @@ float: left;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
     height: 60px;
-    background-color: cadetblue;
+    background-color: #8c57c3;
     width: 289px;
 }
 .rooms_notified_header{
-  color: cadetblue;
+  color: #8c57c3;
   font-weight: 900;
 }
 .rooms_notified_p{
   font-weight: 700;
-    color: cadetblue;
+    color: #8c57c3;
 
 }
 .my_own{

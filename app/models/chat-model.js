@@ -6,7 +6,9 @@ var chatModel = {
     createConv: createConv,
     addMessage: addMessage,
     getAllConvs: getAllConvs,
-    getAllMessages: getAllMessages
+    getAllMessages: getAllMessages,
+    getConvsByUsername: getConvsByUsername,
+    getMessagesByConv: getMessagesByConv
 };
 
 
@@ -35,6 +37,21 @@ function createConv(conv) {
         });
 }
 
+function getConvsByUsername(username) {
+    return new Promise((resolve,reject) => {
+        db.query(`SELECT * FROM convs where pas_1=${username} or pas_2=${username};`,(error,rows,fields)=>{
+            if(!!error) {
+                dbFunc.connectionRelease;
+                reject(error);
+            } else {
+                dbFunc.connectionRelease;
+                resolve(rows);
+            }
+       });
+    }); 
+
+}
+
 
 function getAllConvs() {
     return new Promise((resolve,reject) => {
@@ -49,6 +66,23 @@ function getAllConvs() {
        });
     });  
 }
+
+
+function getMessagesByConv(conv) {
+    return new Promise((resolve,reject) => {
+        db.query(`SELECT * FROM messages where convId=${conv};`,(error,rows,fields)=>{
+            if(!!error) {
+                dbFunc.connectionRelease;
+                reject(error);
+            } else {
+                dbFunc.connectionRelease;
+                resolve(rows);
+            }
+       });
+    }); 
+
+}
+
 
 function getAllMessages() {
     return new Promise((resolve,reject) => {

@@ -7,9 +7,11 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var fs = require("fs");
 var mkdirp = require('mkdirp')
+var chatModel = require('./app/models/chat-model');
 require('./mysql');
 var dbfunc = require('./config/db-function');
 const authenticService = require('./app/services/authentic.service');
+
 
 
 
@@ -19,6 +21,7 @@ dbfunc.connectionCheck.then((data) =>{
    console.log(err);
 });
 
+require('./app/models/user-model').createUserTable();
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
@@ -85,7 +88,7 @@ app.post('/login', function(req, res) {
 
 app.post('/signup', function(req, res) {
   console.log('req.body', req.body.username);
-  var signUpData = {username: req.body.username, password: req.body.password};
+  var signUpData = {username: req.body.username, password: req.body.password, clientImage: req.body.clientImage};
   authenticService.signup(signUpData).then((data) => {
     if(data) {
        res.json({
@@ -96,7 +99,61 @@ app.post('/signup', function(req, res) {
    }).catch((err) => {
      res.json(err);
    });
+});
+
+
+app.post('/message', function(req, res){
+  console.log('adding message');
+  chatModel.addMessage({convId: req.body.convId, author: req.body.author, body: req.body.body, timestamp: req.body.timestamp})
+  .then(data => res.send({
+    success: true,
+    data
+  }))
+  .catch(err => res.send({ success: false, error: err}));
+
+});
+
+app.get('/userinfo', function(req, res) {
+  authenticService.getUserInfoByUsername(req.query.username)
+  .then(data => res.send({
+    success: true,
+    data
+  }))
+  .catch(err => res.send({ success: false, error: err}));
+
+});
+
+app.post('/conv', function(req, res){
+  console.log('creatiing conv', req.body);
+  chatModel.createConv({id: req.body.id, pass_1: req.body.pass_1, pass_2: req.body.pass_2 })
+  .then(data => res.send({
+    success: true,
+    data
+  }))
+  .catch(err => res.send({ success: false, error: err}));
 })
+
+app.get('/conv', function(req, res){
+  console.log('getting conv username', req.query.username);
+  chatModel.getConvsByUsername(req.query.username)
+  .then(data => res.send({
+    success: true,
+    data
+  }))
+  .catch(err => res.send({ success: false, error: err}));
+})
+
+
+app.get('/message', function(req, res){
+  console.log('getting conv', req.query.convid);
+  chatModel.getMessagesByConv(req.query.convid)
+  .then(data => res.send({
+    success: true,
+    data
+  }))
+  .catch(err => res.send({ success: false, error: err}));
+})
+
 
 app.get('/PrivateChat', function(req, res) {
 
@@ -176,6 +233,7 @@ io.on('connection', function(socket, next) {
       console.log(clientsInfo);
       console.log("too");
       console.log(too);
+      console.log('socket id ', socket.id);
       console.log("server join request for "+to+" to join room: "+room);
       console.log("which gently requested from "+clientsInfo[socket.id].name);
       io.sockets.in(too).emit("join_request", room, clientsInfo[socket.id].name, last_msg, clientImage);

@@ -8,7 +8,9 @@ $(document).ready(function() {
     var clientsInfo = {};
     var roomJoined = {};
 
-    var clientImage = '1.png';
+    // var clientImage = '1.png';
+    var clientImage;
+    var myImage = null;
     var currentlyChatting = "myMessages";
     console.log("jQuery working perfectlly");
     var socket = io();
@@ -21,7 +23,7 @@ $(document).ready(function() {
     });
 
     $("#sent_img").mouseleave(function(){
-      $("#sent_img").css("background-color", "cadetblue")
+      $("#sent_img").css("background-color", "#8c57c3")
     });
     //This is
 
@@ -43,7 +45,7 @@ $(document).ready(function() {
 
           roomJoined[theRoom] = {
             name : requester,
-            img : clientImage,
+            clientImage,
             last_msg: last_msg
           };
           console.log("Constructed roomObject");
@@ -322,6 +324,7 @@ $(document).ready(function() {
               console.log("too");
               console.log(roomJoined);
               console.log(too);
+              console.log('clients ', clients);
               console.log("CreateNewJoinedRoom"+clients[id].name);
               if(too == undefined){
                 createNewJoinedRoom(clients[id].name);
@@ -434,7 +437,7 @@ $(document).ready(function() {
       var one = $([
         `<div class="list-group-item active noselect" id="room_message_card">
                 <div class="notify_img">
-                    <img src="/`+data.clientImage+`" alt="..." class="img-circle img-responsive" id="img-circle_chat">
+                    <img src="contacts/`+data.clientImage+`" alt="..." class="img-circle img-responsive" id="img-circle_chat">
                 </div>
                 <div style="float: left; padding-left: 14px;">
                     <h4 class="list-group-item-heading">`+data.sender+`</h4>
@@ -483,6 +486,7 @@ $(document).ready(function() {
       console.log('login here');
       $("#pass-2").css('display', 'none');
       $("#signed_button").text("Login");
+      $("#profile-placeholder-wrapper").css('opacity', 0);
     });
     
     function signupHandler() {
@@ -495,12 +499,18 @@ $(document).ready(function() {
       var pass1 = $('#pass-1').val();
       var pass2 = $('#pass-2').val();
 
+      if(!$('input[name=fb]:checked').val()){
+        $("#validate_error").css('display', 'block');
+        $("#validate_error").text("Please select one profile picture and try again");
+        return console.log('Please select one pics');
+      }
+
       if(pass1 === pass2) {
         // continue registerign
         $.ajax({
           method: "POST",
           url: "http://localhost:3000/signup",
-          data: { username, password: pass1 }
+          data: { username, password: pass1, clientImage: $('input[name=fb]:checked').val() || 'boy' }
         })
           .done(function( msg ) {
             console.log('server response ', msg);
@@ -537,8 +547,13 @@ $(document).ready(function() {
 
     }
 
-    function prepareChatWindow() {
+    function prepareChatWindow(clientImage) {
 
+
+      console.log('IM SETTING YOU THE CLIENT_IMAGE TO ', clientImage);
+      clientImage=clientImage;
+
+      myImage = clientImage;
       //Here i will get the name value
       // hidden the current background and light up the container
       // it's will be cool if it has some interval
@@ -546,7 +561,11 @@ $(document).ready(function() {
       //So far so good
       console.log("checked value");
       console.log($('input[name=fb]:checked').val());
-      clientImage = $('input[name=fb]:checked').val() + '.png';
+      // clientImage = $('input[name=fb]:checked').val() + '.png';
+      // if(clientImage === 'undefined.png') {
+      //   clientImage = '1.png';
+      // }
+      console.log('prepareChatWindow clientImage ', clientImage);
       socket.emit("login", socket.io.engine.id);
 
       setTimeout(function(){
@@ -561,8 +580,8 @@ $(document).ready(function() {
         $("#username_display").css("display","block");
         $("#hello").html("Hello, "+user_name);
         console.log("clientImage "+clientImage);
-        $("#intro_image").attr( "src", "/"+clientImage);
-        $("#profile_pic").attr( "src", "/"+clientImage);
+        $("#intro_image").attr( "src", "contacts/"+clientImage);
+        $("#profile_pic").attr( "src", "contacts/"+clientImage);
 
         var old = socket.io.engine.id;
         socket.io.engine.id = user_name;
@@ -572,6 +591,7 @@ $(document).ready(function() {
 
         $("#online_status").html("Master Chat");
         $("#current_chat_img").attr("src", "/main_chat.png");
+        getConvsByUsername(user_name);
       }, 500);
     }
 
@@ -594,7 +614,9 @@ $(document).ready(function() {
             console.log('Successfully Logged In');
             $("#validate_error").css('display', 'block');
             $("#validate_error").text(username + " is successfully Login");
-            prepareChatWindow();
+            console.log('msg clientImage', msg.data);
+            // clientImage = 
+            prepareChatWindow(msg.data[0].clientImage + '.png');
           }else {
             $("#validate_error").css('display', 'block');
             $("#validate_error").text("Login failed, Please Try again");
@@ -691,26 +713,108 @@ $(document).ready(function() {
             console.log("first clientInfo");
             console.log("Got it, only emmetting left");
             //Keep rooms that this socket connected
+            console.log('before')
             let receiver =  roomJoined[currentlyChatting].name;
             // let receiver =  $('#room_create').val().trim();
             //The brank new function
             console.log("The brand new function");
             createNewJoinedRoom(receiver);
             }
+            $('#input_area').val('');
+            $("#room_create").val('');
         return;
     });
 
 
     //The joinedRoomChanged
+
+    async function joinedRoomFromDB(room, id) {
+      // room must've .name
+
+      console.log("---Joined Room Changed------------------");
+      console.log("The received room");
+      console.log(clientsInfo);
+      var profImg = "1.png"
+      // profImgA = Object.keys(clientsInfo).find(key => clientsInfo[key].name == room.name);
+      // console.log(clientsInfo[profImg]);
+      // profImg = clientsInfo[profImgA].clientImage;
+/*
+      Object.keys(clientsInfo).forEach(function(client){
+        console.log(client);
+        if(clientsInfo[client].name == room.name){
+          profImg = clientsInfo[client].clientImage;
+        }
+      });*/
+      console.log(document.getElementById("chat_w_"+room.name));
+      console.log(room);
+      var one = `<div class="one_room_joined" id="chat_w_`+room.name+`">
+          <img src="contacts/`+room.clientImage+`" class="img-circle img-responsive" style="width: 72px; opacity: 1; float: left; margin-right: 11px; font-weight: bold" />
+          <h4 style="margin-bottom: 4px; font-weight: 600">`+room.name+`</h4>
+          <p style="  font-style:italic;font-size: small; font-family: cursive;">Starting chatting with `+room.name+`</p>
+      </div>
+      `;
+      if(document.getElementById("chat_w_"+room.name) == null){
+        $(".roomJoined_display").append(one);
+      }
+
+      socket.emit("subscribe", room.id);
+
+      roomJoined[room.id] = {
+        name : room.name,
+        clientImage: room.clientImage,
+        last_msg: 'from DB'
+      };
+
+      joinedRoomChanged(room.id);
+      createUniqueDiv(room.id);
+      // Update the Last Message of the conv
+
+      // here you can render the messages
+      await getMessagesByConv(room.id)
+      .then(data => { 
+        data = data.data;
+        console.log('data on getMe', data);
+        data.forEach((el, index) => {
+          console.log('index')
+          if(index === data.length -1) {
+            console.log('final');
+            updateTheLastMsg(room.id, el.body,el.author);
+          }
+          appendInChatRoom(el.convId, el.body, el.author)}
+      )}
+      );
+   
+      $("#chat_w_"+room.name).click(function(){
+        console.log(room.name+" room is clicked!");
+        joinedRoomClick(room.id);
+        $("#chat_w_"+room.name).find("p").removeClass("rooms_notified_p")
+        $("#chat_w_"+room.name).find("h4").removeClass("rooms_notified_header")
+
+        $("#chat_w_"+room.name).css("background-color", "lightgray");
+        $("#chat_w_"+room.name).siblings().css("background-color","#eef2f1");
+        currentlyChatting = room.id;//This is the current room;
+        var sprofImgA = Object.keys(clientsInfo).find(key => clientsInfo[key].name == room.name);
+        // console.log(clientsInfo[profImg]);
+        // var profImgD = clientsInfo[sprofImgA].clientImage;
+        $("#online_status").html(room.name);
+        $("#current_chat_img").attr("src", "contacts/"+room.clientImage)
+
+        console.log("Currently chatting in room: "+currentlyChatting);
+
+      });
+      console.log("-end of joind room changed------------------");
+    }
+
+
     function joinedRoomChanged(room){
 
       console.log("---Joined Room Changed------------------");
       console.log("The received room");
       console.log(clientsInfo);
       var profImg = "1.png"
-      profImgA = Object.keys(clientsInfo).find(key => clientsInfo[key].name == roomJoined[room].name);
-      console.log(clientsInfo[profImg]);
-      profImg = clientsInfo[profImgA].clientImage;
+      // profImgA = Object.keys(clientsInfo).find(key => clientsInfo[key].name == roomJoined[room].name);
+      // console.log(clientsInfo[profImg]);
+      // profImg = clientsInfo[profImgA].clientImage;
 /*
       Object.keys(clientsInfo).forEach(function(client){
         console.log(client);
@@ -721,7 +825,7 @@ $(document).ready(function() {
       console.log(document.getElementById("chat_w_"+roomJoined[room].name));
       console.log(roomJoined[room]);
       var one = `<div class="one_room_joined" id="chat_w_`+roomJoined[room].name+`">
-          <img src="/`+profImg+`" class="img-circle img-responsive" style="width: 72px; opacity: 1; float: left; margin-right: 11px; font-weight: bold" />
+          <img src="contacts/`+roomJoined[room].clientImage+`" class="img-circle img-responsive" style="width: 72px; opacity: 1; float: left; margin-right: 11px; font-weight: bold" />
           <h4 style="margin-bottom: 4px; font-weight: 600">`+roomJoined[room].name+`</h4>
           <p style="  font-style:italic;font-size: small; font-family: cursive;">Starting chatting with `+roomJoined[room].name+`</p>
       </div>
@@ -740,9 +844,10 @@ $(document).ready(function() {
         currentlyChatting = room;//This is the current room;
         var sprofImgA = Object.keys(clientsInfo).find(key => clientsInfo[key].name == roomJoined[room].name);
         // console.log(clientsInfo[profImg]);
-        var profImgD = clientsInfo[sprofImgA].clientImage;
+        // var profImgD = clientsInfo[sprofImgA].clientImage;
+
         $("#online_status").html(roomJoined[room].name);
-        $("#current_chat_img").attr("src", "/"+profImgD)
+        $("#current_chat_img").attr("src", "contacts/"+roomJoined[room].clientImage)
 
         console.log("Currently chatting in room: "+currentlyChatting);
 
@@ -772,6 +877,7 @@ $(document).ready(function() {
       //Here I display only this room
       //And shout down the rest
        $("#"+theRoom).css("display", "block");
+      // $("#welcome").css('display', 'block');
 
        $(".myMessages").not("#"+theRoom).css("display","none")
     }
@@ -837,7 +943,6 @@ $(document).ready(function() {
     });
     function createUniqueDiv(theRoom){
       console.log("-------createUniqueDiv-------------");
-      console.log(roomJoined[theRoom]);
       var one = `<div class="myMessages" id="`+theRoom+`">
                       </div>`;
       //This unique div should append to left_side
@@ -847,7 +952,127 @@ $(document).ready(function() {
       console.log("-------end of createUniqueDiv-------------");
 
     }
-    function createNewJoinedRoom(theNameOfThePerson){
+
+    function getMessagesByConv(conv) {
+      return $.ajax({
+        method: "GET",
+        url: `http://localhost:3000/message?convid="${conv}"`,
+      })
+        .done(function( msg ) {
+          // alert( "Data Saved: " + msg );
+          if(msg.success) {
+            // console.log('message ', msg);
+            // msg.data.forEach((data)=> {
+            //   console.log('message of conv data ', data);
+            // })
+            return msg.data;
+          }else {
+            console.log('conv creation failed');
+            return msg;
+          }
+        })
+        .catch(err => err);
+    }
+
+
+    async function getConvsByUsername(username) {
+      return $.ajax({
+        method: "GET",
+        url: `http://localhost:3000/conv?username="${username}"`,
+      })
+        .done(function( msg ) {
+          // alert( "Data Saved: " + msg );
+          if(msg.success) {
+            console.log('message ', msg);
+            msg.data.forEach((data)=> {
+              console.log('convs data ', data);
+              var otherMember = socket.io.engine.id === data.pas_1 ? data.pas_2: data.pas_1;
+              
+              // roomJoined[data.id] = {
+              //   name : otherMember,
+              //   img : clientImage,
+              //   last_msg: "Last Message"
+              // };
+              getUserInfo(otherMember)
+              .then(otherUserInfo => {
+              
+                console.log('otherUserInfo ', otherUserInfo.data);
+
+                joinedRoomFromDB({name: otherMember, id: data.id, clientImage: otherUserInfo.data[0].clientImage+'.png'})
+              
+              });
+    
+            })
+            return msg;
+          }else {
+            console.log('conv creation failed');
+            return msg;
+          }
+        })
+        .catch(err => err);
+    }
+
+    function createConvAjaxCall(id, pass_1, pass_2) {
+
+      // data should look like {id: 'conv_id', pass_1: 'user_1', pass_2: 'pasword}
+
+      return $.ajax({
+        method: "POST",
+        url: "http://localhost:3000/conv",
+        data: { id, pass_1, pass_2 }
+      })
+        .done(function( msg ) {
+          // alert( "Data Saved: " + msg );
+          if(msg.success) {
+            console.log('message ', msg);
+            return msg;
+          }else {
+            console.log('conv creation failed');
+            return msg;
+          }
+        })
+        .catch(err => err);
+    }
+
+    function getUserInfo(username) {
+      return $.ajax({
+        method: "GET",
+        url: `http://localhost:3000/userinfo?username="${username}"`,
+      }).done(function(res) {
+        if(res.success) {
+          return res.data;
+        }else {
+          return res;
+        }
+      })
+      .catch(err => console.log('err while trying to load user info ', err))
+
+    }
+
+    function addMessageAjaxCall(convId, author, body, timestamp) {
+
+      // data should look like {id: 'conv_id', pass_1: 'user_1', pass_2: 'pasword}
+
+      return $.ajax({
+        method: "POST",
+        url: "http://localhost:3000/message",
+        data: { convId, author, body, timestamp }
+      })
+        .done(function( msg ) {
+          // alert( "Data Saved: " + msg );
+          if(msg.success) {
+            console.log('message ', msg);
+            return msg;
+          }else {
+            console.log('Message addition failed');
+            return msg;
+          }
+        })
+        .catch(err => err);
+    }
+
+
+    async function createNewJoinedRoom(theNameOfThePerson){
           //Here I will check if it's already exist
           //if exist return there is nothing to do here
           //if not create new one
@@ -856,18 +1081,24 @@ $(document).ready(function() {
 
           let receiver = theNameOfThePerson;
           // let receiver = roomJoined[currentlyChatting].name;
-          var roomName = socket.io.engine.id +"_" + receiver;
-          var roomNameReverse = receiver+"_"+socket.io.engine.id;
+          // var roomName = socket.io.engine.id +"_" + receiver;
+          // var roomNameReverse = receiver+"_"+socket.io.engine.id;
+
+          var roomName = socket.io.engine.id > receiver ? socket.io.engine.id + "_" + receiver : receiver +"_"+ socket.io.engine.id
+
+
           console.log("rooms the socket already subscribed");
           console.log(roomJoined);
           console.log("room name");
           console.log(roomName);
           console.log(roomJoined[roomName]);
           //Yea, this is the most powerful line
-          if(roomJoined[roomName] == undefined && roomJoined[roomNameReverse] == undefined){
+          if(!roomJoined[roomName]){
               //Both of them didn't exist
               //so what are you waiting for create one
               console.log("This conversation is virgin :D");
+              const convCreation = await createConvAjaxCall(roomName, socket.io.engine.id, receiver)
+              console.log('convCreation ', convCreation);
               console.log("before going room already joined");
               console.log(roomJoined);
               //when it's the first time
@@ -883,14 +1114,24 @@ $(document).ready(function() {
               console.log("created new room");
               console.log(roomJoined[roomName]);
               console.log("Preparing the roomName "+roomJoined);
+
+              console.log('client Image of me ', clientImage);
+
+              // grab the image for the reciver
+
+              getUserInfo(receiver)
+              .then(msg => {
+
+                if(!msg.success) return;
+
               roomJoined[roomName] = {
                 name : receiver,
-                img : clientImage,//This image has to be the receiver's
+                clientImage: msg.data[0].clientImage + '.png',//This image has to be the receiver's
                 last_msg: $('#input_area').val()
               };
               console.log("Joined new Group with "+receiver);
               console.log(roomJoined);
-              socket.emit("join_request", roomJoined[roomName].name, socket.io.engine.id, roomName, $('#input_area').val(),clientImage);
+              socket.emit("join_request", roomJoined[roomName].name, socket.io.engine.id, roomName, $('#input_area').val(),myImage);
               //Here I'm notifying the new room is created
               //This also go with the join_request emitation
               createUniqueDiv(roomName);
@@ -912,6 +1153,10 @@ $(document).ready(function() {
               //Unique DIV for this room,
               //The div will have a class of myMessages and the Id of the room_name
               //Also this need to be annoced for room_messasge render to haunt and find this
+                
+
+
+              })
                 return;
                 }
                 else{
@@ -922,26 +1167,28 @@ $(document).ready(function() {
             }
 
             function sendToRoom(receiver){
-              var roomName = socket.io.engine.id +"_" + receiver;
-              var roomNameReverse = receiver+"_"+socket.io.engine.id;
-              if(roomJoined[roomName] == undefined || roomJoined[roomNameReverse] == undefined){
+              // You can add a message here
+              var roomName = socket.io.engine.id > receiver ? socket.io.engine.id + "_" + receiver : receiver +"_"+ socket.io.engine.id
+              if(roomJoined[roomName]){
                     console.log("Aha....one of them already exists");
-                    if(roomJoined[roomName] == undefined){
-                      console.log("hey roomName is loser");
-                      // var correcto = roomNameReverse;
-                      var correcto = roomJoined[roomNameReverse].name;
-                    }
-                    else{
-                      console.log("hey roomNameReverse is loser");
-                      // var correcto = roomName;
-                      var correcto = roomJoined[roomName].name;
-                    }
-                    console.log(Object.keys(roomJoined).forEach(function(the_room){
+                   
+                    var correcto = roomJoined[roomName].name;
+
+                    return Object.keys(roomJoined).forEach(function(the_room){
                           console.log("iterating through the_room");
                           console.log(the_room);
                           console.log(typeof(the_room));
                           if(roomJoined[the_room].name == correcto){
                             console.log("yea.....the roomId is: "+the_room);
+
+                            // here call addMessage ajax;
+                            // the_room is convID
+                            // we've sender 
+
+
+                            addMessageAjaxCall(the_room, socket.io.engine.id, $('#input_area').val(), ""+ new Date())
+                            .then(data => console.log('message resnpose', data))
+                            .catch(err => console.log('err ', err));
 
 
                             socket.emit("room-message", {
@@ -951,7 +1198,7 @@ $(document).ready(function() {
                               sender: socket.io.engine.id
                             });
                           }
-                    }));
+                    });
                 }
                 else{
                       //this means this people already meet once and
