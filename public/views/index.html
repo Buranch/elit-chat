@@ -2,17 +2,17 @@
 
 <head>
     <title>Socket.IO chat</title>
-    <link rel="stylesheet" href="/chat-ui-css.css">
+    <link rel="stylesheet" href="css/chat-ui-css.css">
     <!-- <link rel="stylesheet" href="/new_css.css"> -->
 
-    <link rel="stylesheet" href="/bootstrap-3.3.7.css">
+    <link rel="stylesheet" href="css/bootstrap-3.3.7.css">
     <!-- <link rel="stylesheet" href="/materialize.min.css"> -->
 
-    <script src="/jquery-3.1.1.js"></script>
+    <script src="js/jquery-3.1.1.js"></script>
     <!-- <script src="/materialize.js"> -->
 
     </script>
-    <script src="/jquery-ui.js"></script>
+    <script src="js/jquery-ui.js"></script>
 
     </style>
 </head>
@@ -23,7 +23,7 @@
             <div class="modal-header">
                 <span class="close">&times;</span>
                 <center>
-                    <h2 style="padding-top: 20px; font-family: 'Lithos Pro Regular';text-align: center;" id="welcome">Welcome to the Elite Chat</h2></center>
+                    <h2 style="padding-top: 20px; font-family: 'Lithos Pro Regular';text-align: center;" id="welcome">Welcome to the Hira Chat</h2></center>
 
             </div>
             <div class="modal-body">
@@ -81,14 +81,14 @@
               class="img-circle img-responsive"
               id="profile_pic"/>
               <h5 id="profile_name">
-                Biruk Misganaw</h5>
+                User User</h5>
               </div>
           <div id="current_chat">
             <img src="/1.png" id="current_chat_img" class="img-circle img-responsive"/>
             <!-- <input type="file" id="file"> -->
 
             <h5 id="online_status">
-              Biruk Misganaw</h5>
+              User User</h5>
           </div>
           <div id="online_notification">
             <div class="three_boxes">
@@ -100,7 +100,7 @@
 
         <div class="roomJoined_display">
           <div class="one_room_joined" id="mainChatRoom">
-              <img src="/main_chat.png" class="img-circle img-responsive" style="width: 72px; opacity: 1; float: left; margin-right: 11px; font-weight: bold" />
+              <img src="assets/main_chat.png" class="img-circle img-responsive" style="width: 72px; opacity: 1; float: left; margin-right: 11px; font-weight: bold" />
               <h4 style="margin-bottom: 4px; font-weight: 600">Master Chat &#9786;</h4>
               <p style=" font-size: small; font-family: cursive;">You can leave any message..</p>
           </div>
@@ -119,7 +119,7 @@
                         </div>
                   <!--  Was here the textarea-->
             <div id="side">
-                <h4 id="online_title"><span id="joined_now">Demeke Joined Now</span></h4>
+                <h4 id="online_title"><span id="joined_now">User Joined Now</span></h4>
                 <ul id="online_list">
                 </ul>
             </div>
@@ -152,9 +152,9 @@
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/socket.io-stream/socket.io-stream.js"></script>
-    <script src="/jquery-3.1.1.js"></script>
-    <script src="/jquery-ui.js"></script>
-    <script src="/main.js"></script>
+    <script src="js/jquery-3.1.1.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>

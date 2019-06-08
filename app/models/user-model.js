@@ -12,7 +12,8 @@ var userModel = {
    getUserByUsername: getUserByUsername,
    dropTableByName: dropTableByName,
    createConvTable: createConvTable,
-   createMessageTable: createMessageTable
+   createMessageTable: createMessageTable,
+   initializeMysql: initializeMysql
 }
 
 function getAllUser() {
@@ -186,6 +187,14 @@ function deleteUser(id) {
             }
        });    
     });
+}
+
+
+function initializeMysql() {
+    initDB();
+    createConvTable();
+    createUserTable();
+    createMessageTable();
 }
 
 
