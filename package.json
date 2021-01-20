@@ -16,7 +16,7 @@
         "mkdirp": "^0.5.1",
         "mysql": "^2.17.1",
         "nodemon": "^1.19.0",
-        "socket.io": "^2.2.0",
+        "socket.io": "^2.4.0",
         "socket.io-sessions": "^0.6.1",
         "socket.io-stream": "^0.9.1"
     },
